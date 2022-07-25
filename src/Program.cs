@@ -5,12 +5,17 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 
-TypeAdapterConfig<(Guid Id, CustomerRequest Request), CustomerReponse>.NewConfig()
-    .Map(dest => dest.Id, src => src.Id)
-    .Map(dest => dest.FullName, src => $"Your name is '{src.Request.FirstName} {src.Request.LastName}'")
-    .Map(dest => dest.AddressLine1, src => $"Your address is '{src.Request.AddressLine1}'")
-    .Map(dest => dest, src => src.Request);
+TypeAdapterConfig<(Guid Id, CustomerRequest Request), CustomerReponse>
+    .NewConfig()
+        .Map(dest => dest.Id, src => src.Id)
+        .Map(dest => dest.FullName, src => $"Your name is '{src.Request.FirstName} {src.Request.LastName}'")
+        .Map(dest => dest.AddressLine1, src => $"Your address is '{src.Request.AddressLine1}'")
+        .Map(dest => dest, src => src.Request);
 
+TypeAdapterConfig<(Guid Id, ProductRequest Request), ProductResponse>
+    .NewConfig()
+        .Map(dest => dest.Id, src => src.Id)
+        .Map(dest => dest, src => src.Request);
 
 var builder = WebApplication.CreateBuilder(args);
 
