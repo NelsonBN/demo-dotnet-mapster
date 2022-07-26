@@ -8,23 +8,49 @@ namespace APIApiDemo.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ExtensionsController : ControllerBase
+public class AdaptController : ControllerBase
 {
-    private readonly ILogger<ExtensionsController> _logger;
+    private readonly ILogger<AdaptController> _logger;
 
-    public ExtensionsController(ILogger<ExtensionsController> logger)
+    public AdaptController(ILogger<AdaptController> logger)
         => _logger = logger;
 
-    [HttpPost("customer-without-config")]
-    public IActionResult CustomerWithoutConfig(CustomerRequest request)
+
+
+    [HttpPost("clone")]
+    public IActionResult Clone(ProductRequest request)
+    {
+        ProductRequest response = new();
+
+        request.Adapt(response);
+
+        return Ok(new
+        {
+            SourceHashCode = request.GetHashCode(),
+            DestinationHashCode = response.GetHashCode(),
+            IsEquals = request == response,
+            New = response
+        });
+    }
+
+    [HttpPost("copy-to-different-type")]
+    public IActionResult CopyToDifferentType(CustomerRequest request)
     {
         var response = request.Adapt<CustomerReponse>();
 
         return Ok(response);
     }
 
-    [HttpPost("{id:guid}/customer-with-config")]
-    public IActionResult CustomerWithConfig(
+    [HttpPost("from-record-to-class")]
+    public IActionResult FromRecordToClass(OrderDto request)
+    {
+        var response = request.Adapt<Order>();
+
+        return Ok(response);
+    }
+
+    [HttpPost("{id:guid}/using-mapping-configurations")]
+    public IActionResult UsingMappingConfigurations(
         [FromRoute] Guid id,
         [FromBody] CustomerRequest request
     )
@@ -41,8 +67,8 @@ public class ExtensionsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("{id:guid}/customer-global-config")]
-    public IActionResult CustomerGlobalConfig(
+    [HttpPost("{id:guid}/using-mapping-global-configurations")]
+    public IActionResult UsingMappingGlobalConfigurations(
         [FromRoute] Guid id,
         [FromBody] CustomerRequest request
     )
@@ -68,8 +94,8 @@ public class ExtensionsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("customer-with-events")]
-    public IActionResult CustomerEvents(CustomerRequest request)
+    [HttpPost("using-callbacks")]
+    public IActionResult UsingCallbacks(CustomerRequest request)
     {
         var config = new TypeAdapterConfig();
 
@@ -82,8 +108,8 @@ public class ExtensionsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost("customer-with-condition")]
-    public IActionResult CustomerWithCondition(CustomerRequest request)
+    [HttpPost("using-conditions")]
+    public IActionResult UsingConditions(CustomerRequest request)
     {
         var config = new TypeAdapterConfig();
 
@@ -98,4 +124,10 @@ public class ExtensionsController : ControllerBase
 
         return Ok(response);
     }
+
+    [HttpPost("{id:guid}/to-response")]
+    public IActionResult ToResponse(
+        [FromRoute] Guid id,
+        [FromBody] ProductRequest request
+    ) => Ok(request.ToResponse(id));
 }
