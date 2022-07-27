@@ -130,4 +130,22 @@ public class AdaptController : ControllerBase
         [FromRoute] Guid id,
         [FromBody] ProductRequest request
     ) => Ok(request.ToResponse(id));
+
+    [HttpPost("parameterless-constructor")]
+    public IActionResult ParameterlessConstructor(
+        [FromBody] PostRequest request
+    ) => Ok(request.Adapt<PostValueObject>());
+
+    [HttpPost("inheritance-without-default-constructor")]
+    public IActionResult InheritanceWithoutDefaultConstructor(
+        [FromBody] PostRequest request
+    )
+    {
+        var config = new TypeAdapterConfig();
+
+        config.NewConfig<PostRequest, Article>()
+            .MapToConstructor(true);
+
+        return Ok(request.Adapt<Article>(config));
+    }
 }
