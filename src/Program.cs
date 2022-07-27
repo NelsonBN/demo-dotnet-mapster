@@ -17,6 +17,11 @@ TypeAdapterConfig<(Guid Id, ProductRequest Request), ProductResponse>
         .Map(dest => dest.Id, src => src.Id)
         .Map(dest => dest, src => src.Request);
 
+TypeAdapterConfig.GlobalSettings
+    .ForDestinationType<ArticleBase>()
+            .MapToConstructor(true);
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 

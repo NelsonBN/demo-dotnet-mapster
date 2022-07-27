@@ -146,6 +146,6 @@ public class AdaptController : ControllerBase
         config.NewConfig<PostRequest, Article>()
             .MapToConstructor(true);
 
-        return Ok(request.Adapt<Article>(config));
+        return Ok(request.Adapt<Article>(/*config*/));
     }
 }
